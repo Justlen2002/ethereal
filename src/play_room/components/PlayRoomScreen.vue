@@ -1,8 +1,8 @@
 <template>
   <div class="play-room-screen">
     <div class="play-room-header">
-      <div class="d-flex align-items-center">
-        <logo-qwerty class="logo-style"></logo-qwerty>
+      <div class="d-flex align-items-center cursor-pointer" @click="$router.push({path: '/'})">
+        <logo-qwerty class="logo-style" />
         <p class="logo-name mt-3">Ethereal Project</p>
       </div>
       <div
@@ -14,7 +14,7 @@
           px-4
         "
       >
-        <div class="grey-color">Chapter 1</div>
+        <div class="grey-color change-chapter" @click="$router.push({path: '/chapter'})">Chapter 1</div>
         <b-form-select class="grey-color">Beautiful sound</b-form-select>
         <div class="d-flex mb-3">
           <b-button class="logo-child mx-2">
@@ -55,7 +55,7 @@
       </div>
 
       <div class="calculate-card d-flex justify-content-around align-items-center">
-        <div v-for="(field, index) in calculateFields" :key="index" :style="{width: '15%'}">
+        <div v-for="(field, index) in calculateFields" class="text-center" :key="index" :style="{width: '15%'}">
           <span class="text-white">
             0.0
           </span>
@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script>
+<script scoped>
 import Vue from "vue";
 import LogoQwerty from "../../assets/LogoQwerty";
 import SwitchLogo from "../../assets/SwitchLogo";
@@ -150,6 +150,7 @@ export default Vue.extend({
   width: 80%;
   height: auto;
   font-size: 20px;
+  text-align: center;
   animation-duration: 1.5s;
   animation-name: changeColor;
   animation-iteration-count: infinite;
@@ -205,5 +206,17 @@ export default Vue.extend({
   background-color: #818cf8;
   border-radius: 10px;
   padding: 5px 20px;
+}
+
+.change-chapter:hover {
+  cursor: pointer;
+  background-color: #818cf8;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 30px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
