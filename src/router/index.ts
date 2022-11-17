@@ -1,24 +1,34 @@
 import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
-// import PlayRoomScreen from '../play_room/components/PlayRoomScreen.vue'
+import Router from 'vue-router'
+import PlayRoomScreen from '../play_room/components/PlayRoomScreen.vue'
+import MainMenu from '../play_room/components/MainMenu.vue'
+import Chapter from '../play_room/components/Chapter.vue'
+import Login from '../play_room/components/Login.vue'
 
-Vue.use(VueRouter)
+Vue.use(Router)
 
-const routes: Array<RouteConfig> = [
-  {
-    path: '/',
-    name: 'playroom',
-    component: () => import('../play_room/components/PlayRoomScreen.vue')
-  },
-  // {
-  //   path: '/',
-  //   name: 'login',
-  //   component: () => import('../play_room/components/Login.vue')
-  // },
-]
-
-const router = new VueRouter({
-  routes
+export default new Router({
+  mode: 'history',
+  routes: [
+    {
+      path: '/play-room',
+      name: 'play-room',
+      component: PlayRoomScreen
+    },
+    // {
+    //   path: '/',
+    //   name: 'login',
+    //   component: Login
+    // },
+    {
+      path: '/',
+      name: 'main-menu',
+      component: MainMenu,
+    },
+    {
+      path: '/chapter',
+      name: 'chapter',
+      component: Chapter,
+    },
+  ]
 })
-
-export default router
