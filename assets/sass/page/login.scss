@@ -1,0 +1,36 @@
+// #login-page {
+//   background: url('~/assets/images/bg-login.png') top center/contain no-repeat
+//     $white-base;
+//   padding-top: 85px;
+// }
+
+// #home_page,
+// #create_page {
+//   height: calc(100vh - 48px);
+//   overflow-y: scroll;
+
+//   @include devices($md) {
+//     padding-top: 1.8rem;
+//   }
+// }
+
+// .icon-like {
+//   .list-icon {
+//     display: flex;
+//     visibility: hidden;
+//     width: 200px;
+//     opacity: 0;
+//     bottom: 0rem;
+//     transition: 0.5s all;
+//   }
+
+//   &:hover .list-icon {
+//     visibility: visible;
+//     opacity: 1;
+//     bottom: 1.8rem;
+//   }
+// }
+
+// .el-upload--picture-card {
+//   width: 100%;
+// }

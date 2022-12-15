@@ -1,0 +1,44 @@
+[
+  {
+    "name": "chapter___en",
+    "path": "/chapter",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/chapter.vue",
+    "chunkName": "pages/chapter",
+    "_name": "_d0544d1a"
+  },
+  {
+    "name": "create-new___en",
+    "path": "/create-new",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/create-new.vue",
+    "chunkName": "pages/create-new",
+    "_name": "_12427899"
+  },
+  {
+    "name": "login___en",
+    "path": "/login",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/login.vue",
+    "chunkName": "pages/login",
+    "_name": "_9bd16be2"
+  },
+  {
+    "name": "multiple-player___en",
+    "path": "/multiple-player",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/multiple-player.vue",
+    "chunkName": "pages/multiple-player",
+    "_name": "_5c94fbe4"
+  },
+  {
+    "name": "play-room___en",
+    "path": "/play-room",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/play-room.vue",
+    "chunkName": "pages/play-room",
+    "_name": "_7a53a40c"
+  },
+  {
+    "name": "index___en",
+    "path": "/",
+    "component": "/Users/nals_macbook_275/Desktop/ethereal/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_2f20b210"
+  }
+]

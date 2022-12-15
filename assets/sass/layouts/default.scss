@@ -1,0 +1,36 @@
+// @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+// body {
+//   margin: 0;
+//   font-family: $ff-primary;
+//   font-size: $fs-primary;
+//   color: $text-base;
+//   background-color: $bg-color;
+//   min-height: 100vh;
+//   overflow-x: hidden !important;
+// }
+
+// .bg-phone {
+//   position: relative;
+
+//   @include devices($md) {
+//     @include box(372px, 748px);
+//     padding: 18px 22px;
+//     margin-left: 20px;
+//     overflow-y: scroll;
+//   }
+
+//   &::before {
+//     @include devices($md) {
+//       content: '';
+//       left: 20px;
+//       top: 0;
+//       position: fixed;
+//       background: url('~/assets/images/background-phone.png') top center/contain
+//         no-repeat;
+//       @include box(372px, 750px);
+//       pointer-events: none;
+//       z-index: 9999;
+//     }
+//   }
+// }
