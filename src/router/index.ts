@@ -15,11 +15,11 @@ export default new Router({
       name: 'play-room',
       component: PlayRoomScreen
     },
-    // {
-    //   path: '/',
-    //   name: 'login',
-    //   component: Login
-    // },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
     {
       path: '/',
       name: 'main-menu',
