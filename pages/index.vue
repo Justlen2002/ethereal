@@ -30,7 +30,7 @@
       <div
         id="side-2"
         class="slide card active cursor-pointer ml-4"
-        @click="$router.push({ path: '/multiple-player' })"
+        @click="$router.push({ path: '/login' })"
       >
         <div class="card-body">
           <multiple class="logo" />
@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import Single from '@/assets/Single.vue';
-import Multiple from '@/assets/Multiple.vue';
+import Vue from "vue";
+import Single from "@/assets/Single.vue";
+import Multiple from "@/assets/Multiple.vue";
 
 export default Vue.extend({
   components: {
@@ -54,12 +54,12 @@ export default Vue.extend({
 
   created() {
     // eslint-disable-next-line nuxt/no-globals-in-created
-    const scriptTag = document.createElement('script');
+    const scriptTag = document.createElement("script");
     scriptTag.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css';
-    scriptTag.id = 'bootstrap-vue';
+      "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css";
+    scriptTag.id = "bootstrap-vue";
     // eslint-disable-next-line nuxt/no-globals-in-created
-    document.getElementsByTagName('head')[0].appendChild(scriptTag);
+    document.getElementsByTagName("head")[0].appendChild(scriptTag);
   },
 });
 </script>

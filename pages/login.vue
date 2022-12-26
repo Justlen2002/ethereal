@@ -28,90 +28,54 @@
             d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143"
           />
         </svg>
-        <b-form class="form">
-          <label for="email">Email</label>
+        <form class="form" v-on:submit="onSubmit">
+          <label for="email">Username</label>
           <input
             class="input"
-            type="email"
-            id="email"
-            placeholder="Email"
-            autocomplete="off"
+            type="text"
+            v-model="form.username"
+            id="username"
           />
           <label for="password">Password</label>
           <input
+            class="input"
             type="password"
             id="password"
-            placeholder="Password"
-            autocomplete="off"
+            v-model="form.password"
           />
-          <input type="submit" id="submit" value="Submit" />
-        </b-form>
+          <input type="submit" id="button-submit" />
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 
 export default Vue.extend({
-  mounted() {
-    console.log('hihi');
-    var current = null;
-    document.querySelector('#email').addEventListener('focus', function (e) {
-      if (current) current.pause();
-      current = anime({
-        targets: 'path',
-        strokeDashoffset: {
-          value: 0,
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-        strokeDasharray: {
-          value: '240 1386',
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-      });
-    });
-    document.querySelector('#password').addEventListener('focus', function (e) {
-      if (current) current.pause();
-      current = anime({
-        targets: 'path',
-        strokeDashoffset: {
-          value: -336,
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-        strokeDasharray: {
-          value: '240 1386',
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-      });
-    });
-    document.querySelector('#submit').addEventListener('focus', function (e) {
-      if (current) current.pause();
-      current = anime({
-        targets: 'path',
-        strokeDashoffset: {
-          value: -730,
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-        strokeDasharray: {
-          value: '530 1386',
-          duration: 700,
-          easing: 'easeOutQuart',
-        },
-      });
-    });
+  data() {
+    return {
+      form: {
+        username: "",
+        password: "",
+      },
+    };
+  },
+
+  methods: {
+    onSubmit(event) {
+      event.preventDefault();
+      localStorage.setItem("role", this.form.username);
+
+      this.$router.push({ path: "/multiple-player" });
+    },
   },
 });
 </script>
 
 <style scoped>
-@import url('https://rsms.me/inter/inter-ui.css');
+@import url("https://rsms.me/inter/inter-ui.css");
 
 ::selection {
   background: #2d2f36;
@@ -123,7 +87,7 @@ export default Vue.extend({
 
 body {
   background: white;
-  font-family: 'Inter UI', sans-serif;
+  font-family: "Inter UI", sans-serif;
   margin: 0;
   padding: 20px;
 }
@@ -262,7 +226,7 @@ input::-moz-focus-inner {
   border: 0;
 }
 
-#submit {
+#button-submit {
   color: #707075;
   margin-top: 40px;
   transition: color 300ms;

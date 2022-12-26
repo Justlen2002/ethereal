@@ -33,7 +33,7 @@
         Back
       </b-button>
       <b-button
-        v-if="!winner && !startGame"
+        v-if="!winner && !startGame && isHost"
         class="button-start cursor-pointer"
         @click="onStart"
       >
@@ -43,7 +43,7 @@
     </div>
 
     <div
-      v-if="finish && winner.result"
+      v-if="finish && winner.result && isHost"
       class="d-flex flex-column play-room-main-ground justify-content-center align-items-center w-100"
       :style="{ paddingTop: '20vh', paddingBottom: '20vh' }"
     >
@@ -56,7 +56,7 @@
     </div>
 
     <div
-      v-if="finish && !winner.result"
+      v-if="finish && !winner.result && isHost"
       class="d-flex flex-column play-room-main-ground justify-content-center align-items-center w-100"
       :style="{ paddingTop: '20vh', paddingBottom: '20vh' }"
     >
@@ -64,6 +64,32 @@
       <h2 class="text-white">{{ winner.host }} : {{ winner.member }}</h2>
       <img
         src="https://media0.giphy.com/media/9b5PGYzFoeLvy3RfJO/giphy.gif?cid=6c09b9529e9f9b510da78aa198c9d2781280530d95c92e20&rid=giphy.gif&ct=ts"
+        class="w-25 text-center"
+      />
+    </div>
+
+    <div
+      v-if="finish && winner.result && !isHost"
+      class="d-flex flex-column play-room-main-ground justify-content-center align-items-center w-100"
+      :style="{ paddingTop: '20vh', paddingBottom: '20vh' }"
+    >
+      <h1 class="text-white text-center mb-4">TRY AGAIN LATER!</h1>
+      <h2 class="text-white">{{ winner.member }} : {{ winner.host }}</h2>
+      <img
+        src="https://media0.giphy.com/media/9b5PGYzFoeLvy3RfJO/giphy.gif?cid=6c09b9529e9f9b510da78aa198c9d2781280530d95c92e20&rid=giphy.gif&ct=ts"
+        class="w-25 text-center"
+      />
+    </div>
+
+    <div
+      v-if="finish && !winner.result && !isHost"
+      class="d-flex flex-column play-room-main-ground justify-content-center align-items-center w-100"
+      :style="{ paddingTop: '20vh', paddingBottom: '20vh' }"
+    >
+      <h1 class="text-white text-center mb-2">CONGRATULATIONS! YOU WIN!!!</h1>
+      <h2 class="text-white">{{ winner.member }} : {{ winner.host }}</h2>
+      <img
+        src="https://cdn.dribbble.com/users/217021/screenshots/1703306/pic_5.gif"
         class="w-25 text-center"
       />
     </div>
@@ -86,7 +112,9 @@
           <div class="d-flex justify-content-center align-items-center">
             <div class="text-keyboard-data d-flex">
               <p
-                v-for="(char, idx) in checkSpell(hostWordList[hostIndex])"
+                v-for="(char, idx) in checkSpell(
+                  hostWordList[isHost ? hostIndex : memberIndex]
+                )"
                 :key="idx"
                 :class="checkColor(idx + 1) ? '' : returnSpellColor(idx)"
               >
@@ -150,8 +178,8 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import LogoQwerty from '@/assets/LogoQwerty';
+import Vue from "vue";
+import LogoQwerty from "@/assets/LogoQwerty";
 
 export default Vue.extend({
   components: {
@@ -165,14 +193,47 @@ export default Vue.extend({
       time: 0,
       hostInputNumber: 0,
       hostIndex: 0,
+      memberIndex: 0,
       wordSelectId: 0,
       startGame: false,
       intervalId: null,
       finish: false,
       data: null,
-      wordSelect: '',
+      wordSelect: "",
       winner: false,
-      memberWord: '',
+      memberWord: "",
+      start: false,
+      mountedStart: null,
+
+      wordListMember: [
+        "cancel",
+        "explosive",
+        "numerous",
+        "govern",
+        "analyse",
+        "discourage",
+        "resemble",
+        "remote",
+        "salary",
+        "pollution",
+        "pretend",
+        "kettle",
+      ],
+
+      wordListHost: [
+        "discourage",
+        "resemble",
+        "remote",
+        "salary",
+        "pollution",
+        "pretend",
+        "kettle",
+        "cancel",
+        "explosive",
+        "numerous",
+        "govern",
+        "analyse",
+      ],
     };
   },
 
@@ -180,11 +241,11 @@ export default Vue.extend({
     calculateFields() {
       return [
         {
-          title: 'Input number',
+          title: "Input number",
           value: this.hostInputNumber,
         },
         {
-          title: 'Speed',
+          title: "Speed",
           value: this.speed.toFixed(1),
         },
       ];
@@ -196,18 +257,25 @@ export default Vue.extend({
     },
 
     timeCount() {
-      return `${Math.floor(this.time / 60) < 10 ? '0' : ''}${Math.floor(
+      return `${Math.floor(this.time / 60) < 10 ? "0" : ""}${Math.floor(
         this.time / 60
-      )}:${this.time - Math.floor(this.time / 60) * 60 < 10 ? '0' : ''}${
+      )}:${this.time - Math.floor(this.time / 60) * 60 < 10 ? "0" : ""}${
         this.time - Math.floor(this.time / 60) * 60
       }`;
+    },
+
+    isHost() {
+      return localStorage.getItem("role") === "host";
     },
   },
 
   watch: {
     time: {
-      handler(val) {
-        if (val === 10) {
+      async handler(val) {
+        if (this.startGame && !this.isHost) {
+          this.onStopMounted;
+        }
+        if (val === 60) {
           this.onStop();
           this.finish = true;
           this.onCompare();
@@ -222,48 +290,144 @@ export default Vue.extend({
         this.onUpdate();
       },
     },
+
+    memberIndex: {
+      handler() {
+        this.onSpeak(this.hostWordList[this.memberIndex]);
+        this.onUpdate();
+      },
+    },
   },
 
   async created() {
-    const scriptTag = document.createElement('script');
-    scriptTag.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css';
-    scriptTag.id = 'bootstrap-vue';
-    // eslint-disable-next-line nuxt/no-globals-in-created
-    document.getElementsByTagName('head')[0].appendChild(scriptTag);
+    const snapshot = await this.$fire.firestore.collection("messages").get();
+    const [dataNew] = snapshot.docs.map((doc) => doc.data());
+    await this.$fire.firestore
+      .collection("messages")
+      .doc("typing")
+      .update({
+        ...dataNew,
+        start: false,
+        host: {
+          word_list: this.wordListHost,
+          id: 1,
+          count: 0,
+        },
+        member: {
+          word_list: this.wordListMember,
+          id: 1,
+          count: 0,
+        },
+      });
+    if (this.isHost) {
+      const scriptTag = document.createElement("script");
+      scriptTag.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css";
+      scriptTag.id = "bootstrap-vue";
+      // eslint-disable-next-line nuxt/no-globals-in-created
+      document.getElementsByTagName("head")[0].appendChild(scriptTag);
 
-    const snapshot = await this.$fire.firestore.collection('messages').get();
-    const [data] = snapshot.docs.map((doc) => doc.data());
-    this.hostWordList = data.host.word_list;
-    this.data = data;
+      const snapshot = await this.$fire.firestore.collection("messages").get();
+      const [data] = snapshot.docs.map((doc) => doc.data());
+      this.hostWordList = data.host.word_list;
+      this.data = data;
+    } else {
+      const scriptTag = document.createElement("script");
+      scriptTag.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.22.0/bootstrap-vue.min.css";
+      scriptTag.id = "bootstrap-vue";
+      // eslint-disable-next-line nuxt/no-globals-in-created
+      document.getElementsByTagName("head")[0].appendChild(scriptTag);
+
+      const snapshot = await this.$fire.firestore.collection("messages").get();
+      const [data] = snapshot.docs.map((doc) => doc.data());
+      this.hostWordList = data.member.word_list;
+      this.data = data;
+    }
   },
 
   mounted() {
-    window.addEventListener('keydown', (e) => {
-      if (!this.startGame) return;
-      this.hostInputNumber++;
-      if (e.keyCode === this.wordSelect[this.wordSelectId].charCodeAt() - 32) {
-        this.char = e.keyCode;
-        this.onBeepTrue();
-        if (this.wordSelectId === this.wordSelect.length - 1) {
-          this.hostIndex++;
-          this.wordSelectId = 0;
+    if (this.isHost) {
+      window.addEventListener("keydown", (e) => {
+        if (!this.startGame) return;
+        this.hostInputNumber++;
+        if (
+          e.keyCode ===
+          this.wordSelect[this.wordSelectId].charCodeAt() - 32
+        ) {
+          this.char = e.keyCode;
+          this.onBeepTrue();
+          if (this.wordSelectId === this.wordSelect.length - 1) {
+            this.hostIndex++;
+            this.wordSelectId = 0;
+          } else {
+            this.wordSelectId++;
+          }
         } else {
           this.wordSelectId++;
+          this.onBeepWrong();
+          this.onSpeak(this.hostWordList[this.hostIndex]);
+          setTimeout(() => {
+            this.wordSelectId = 0;
+          }, 500);
         }
-      } else {
-        this.wordSelectId++;
-        this.onBeepWrong();
-        this.onSpeak(this.hostWordList[this.hostIndex]);
-        setTimeout(() => {
-          this.wordSelectId = 0;
-        }, 500);
-      }
-    });
+      });
+    } else {
+      window.addEventListener("keydown", (e) => {
+        if (!this.startGame) return;
+        this.hostInputNumber++;
+        if (
+          e.keyCode ===
+          this.wordSelect[this.wordSelectId].charCodeAt() - 32
+        ) {
+          this.char = e.keyCode;
+          this.onBeepTrue();
+          if (this.wordSelectId === this.wordSelect.length - 1) {
+            this.memberIndex++;
+            this.wordSelectId = 0;
+          } else {
+            this.wordSelectId++;
+          }
+        } else {
+          this.wordSelectId++;
+          this.onBeepWrong();
+          this.onSpeak(this.hostWordList[this.memberIndex]);
+          setTimeout(() => {
+            this.wordSelectId = 0;
+          }, 500);
+        }
+      });
+    }
+
+    if (!this.isHost) {
+      this.onMountedStart();
+    }
   },
 
   methods: {
-    // onGetFirebase() {},
+    onMountedStart() {
+      this.mountedStart = setInterval(async () => {
+        const snapshot = await this.$fire.firestore
+          .collection("messages")
+          .get();
+        const [data] = snapshot.docs.map((doc) => doc.data());
+
+        // console.log("start");
+        // console.log(data.start);
+        if (data.start) {
+          if (!this.startGame) {
+            this.countTime();
+          }
+          this.startGame = true;
+          this.onSpeak(this.hostWordList[this.hostIndex]);
+          // this.fetchMemberWord();
+        }
+      }, 1000);
+    },
+
+    onStopMounted() {
+      clearInterval(this.mountedStart);
+    },
 
     countTime() {
       this.intervalId = setInterval(() => {
@@ -277,14 +441,29 @@ export default Vue.extend({
     },
 
     onStart() {
-      this.startGame = true;
-      this.onSpeak(this.hostWordList[this.hostIndex]);
-      this.countTime();
-      this.fetchMemberWord();
+      this.onClickStart();
+      // this.startGame = true;
+      // this.onSpeak(this.hostWordList[this.hostIndex]);
+      // this.fetchMemberWord();
     },
 
+    async onClickStart() {
+      const snapshot = await this.$fire.firestore.collection("messages").get();
+      const [data] = snapshot.docs.map((doc) => doc.data());
+
+      await this.$fire.firestore
+        .collection("messages")
+        .doc("typing")
+        .update({
+          ...data,
+          start: true,
+        });
+
+      this.startGame = true;
+      this.countTime();
+    },
     checkSpell(word) {
-      var arr = word.split('');
+      var arr = word?.split("");
       this.wordSelect = arr;
       return arr;
     },
@@ -312,21 +491,37 @@ export default Vue.extend({
     },
 
     async onUpdate() {
-      await this.$fire.firestore
-        .collection('messages')
-        .doc('typing')
-        .update({
-          ...this.data,
-          host: {
-            word_list: this.hostWordList,
-            id: 1,
-            count: this.hostIndex,
-          },
-        });
+      const snapshot = await this.$fire.firestore.collection("messages").get();
+      const [data] = snapshot.docs.map((doc) => doc.data());
+      if (this.isHost) {
+        await this.$fire.firestore
+          .collection("messages")
+          .doc("typing")
+          .update({
+            ...data,
+            host: {
+              word_list: this.hostWordList,
+              id: 1,
+              count: this.hostIndex,
+            },
+          });
+      } else {
+        await this.$fire.firestore
+          .collection("messages")
+          .doc("typing")
+          .update({
+            ...data,
+            member: {
+              word_list: this.hostWordList,
+              id: 1,
+              count: this.memberIndex,
+            },
+          });
+      }
     },
 
     async onCompare() {
-      const snapshot = await this.$fire.firestore.collection('messages').get();
+      const snapshot = await this.$fire.firestore.collection("messages").get();
       const [data] = snapshot.docs.map((doc) => doc.data());
 
       if (data.host.count >= data.member.count)
@@ -342,23 +537,45 @@ export default Vue.extend({
           result: false,
         };
       }
+
+      await this.$fire.firestore
+        .collection("messages")
+        .doc("typing")
+        .update({
+          ...data,
+          start: false,
+        });
     },
 
     async fetchMemberWord() {
-      const snapshot = await this.$fire.firestore.collection('messages').get();
-      const [data] = snapshot.docs.map((doc) => doc.data());
+      if (this.isHost) {
+        const snapshot = await this.$fire.firestore
+          .collection("messages")
+          .get();
+        const [data] = snapshot.docs.map((doc) => doc.data());
 
-      // TODO: Make real data
-      // this.memberWord = data.member.word_list[data.member.count] ?? '';
+        // TODO: Make real data
+        // this.memberWord = data.member.word_list[data.member.count] ?? '';
 
-      this.memberWord = data.member.word_list[this.time] ?? '';
+        this.memberWord = data.member.word_list[data.member.count] ?? "";
+      } else {
+        const snapshot = await this.$fire.firestore
+          .collection("messages")
+          .get();
+        const [data] = snapshot.docs.map((doc) => doc.data());
+
+        // TODO: Make real data
+        // this.memberWord = data.member.word_list[data.member.count] ?? '';
+
+        this.memberWord = data.host.word_list[data.host.count] ?? "";
+      }
     },
 
     returnSpellColor(idx) {
       return this.wordSelect[idx].charCodeAt() - 32 === this.char ||
         idx + 1 < this.wordSelectId
-        ? 'text-green'
-        : 'text-red';
+        ? "text-green"
+        : "text-red";
     },
   },
 });
